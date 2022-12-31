@@ -1,9 +1,10 @@
 package com.br.clean.entrypoint.controller.response;
 
 import com.br.clean.core.domain.Address;
+import lombok.Data;
 import lombok.Setter;
 
-@Setter
+@Data
 public class ResponsePerson {
     private Long id;
     private String name;
