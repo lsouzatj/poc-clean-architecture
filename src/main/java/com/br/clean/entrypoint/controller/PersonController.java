@@ -2,6 +2,7 @@ package com.br.clean.entrypoint.controller;
 
 import com.br.clean.core.domain.Person;
 import com.br.clean.core.usecase.FindAllPersonUseCase;
+import com.br.clean.core.usecase.FindByIdPersonUseCase;
 import com.br.clean.core.usecase.InsertPersonUseCase;
 import com.br.clean.entrypoint.controller.response.PersonResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class PersonController {
     private final InsertPersonUseCase insertPersonUseCase;
     private final FindAllPersonUseCase findAllPersonUseCase;
+    private final FindByIdPersonUseCase findByIdPersonUseCase;
 
     @PostMapping("/insert")
     public ResponseEntity<PersonResponse> insertPerson(@RequestBody Person person){
@@ -52,5 +54,16 @@ public class PersonController {
                     log.info("Listing executed successfuly.");
                     return ResponseEntity.status(HttpStatus.OK).body(listPersonResponse);
                 }).orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+    }
+
+    @GetMapping("find/{id}")
+    public ResponseEntity<PersonResponse> findByIdPerson(@PathVariable Long id){
+        log.info("Process initial of find.");
+        return findByIdPersonUseCase.findById(id).map(person -> {
+            PersonResponse personResponse = new PersonResponse();
+            BeanUtils.copyProperties(person, personResponse);
+            log.info("Find executed successfuly.");
+            return ResponseEntity.status(HttpStatus.OK).body(personResponse);
+        }).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
 }
