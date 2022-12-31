@@ -4,6 +4,8 @@ import com.br.clean.core.domain.Person;
 import com.br.clean.core.usecase.FindAllPersonUseCase;
 import com.br.clean.core.usecase.FindByIdPersonUseCase;
 import com.br.clean.core.usecase.InsertPersonUseCase;
+import com.br.clean.core.usecase.UpdatePersonUseCase;
+import com.br.clean.entrypoint.controller.request.PersonRequest;
 import com.br.clean.entrypoint.controller.response.PersonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -24,6 +26,7 @@ public class PersonController {
     private final InsertPersonUseCase insertPersonUseCase;
     private final FindAllPersonUseCase findAllPersonUseCase;
     private final FindByIdPersonUseCase findByIdPersonUseCase;
+    private final UpdatePersonUseCase updatePersonUseCase;
 
     @PostMapping("/insert")
     public ResponseEntity<PersonResponse> insertPerson(@RequestBody Person person){
@@ -56,13 +59,24 @@ public class PersonController {
                 }).orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 
-    @GetMapping("find/{id}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<PersonResponse> findByIdPerson(@PathVariable Long id){
         log.info("Process initial of find.");
         return findByIdPersonUseCase.findById(id).map(person -> {
             PersonResponse personResponse = new PersonResponse();
             BeanUtils.copyProperties(person, personResponse);
             log.info("Find executed successfuly.");
+            return ResponseEntity.status(HttpStatus.OK).body(personResponse);
+        }).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<PersonResponse> updatePerson(@RequestBody PersonRequest personRequest, @PathVariable Long id){
+        Person person = new Person();
+        BeanUtils.copyProperties(personRequest, person);
+        return updatePersonUseCase.update(person, id).map(personUpdated -> {
+            PersonResponse personResponse = new PersonResponse();
+            BeanUtils.copyProperties(personUpdated, personResponse);
             return ResponseEntity.status(HttpStatus.OK).body(personResponse);
         }).orElse(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }
