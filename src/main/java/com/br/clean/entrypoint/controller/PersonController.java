@@ -27,8 +27,10 @@ public class PersonController {
     private final DeletePersonUseCase deletePersonUseCase;
 
     @PostMapping("/insert")
-    public ResponseEntity<PersonResponse> insertPerson(@RequestBody Person person){
+    public ResponseEntity<PersonResponse> insertPerson(@RequestBody PersonRequest personRequest){
         log.info("Process initial of insert.");
+        Person person = new Person();
+        BeanUtils.copyProperties(personRequest, person);
         return Optional.of(insertPersonUseCase.insert(person)).map(personSaved ->{
             PersonResponse personResponse = new PersonResponse();
             BeanUtils.copyProperties(personSaved, personResponse);
