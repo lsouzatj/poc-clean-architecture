@@ -1,6 +1,7 @@
 package com.br.clean.entrypoint.controller;
 
 import com.br.clean.core.domain.Person;
+import com.br.clean.core.usecase.FindAllPersonUseCase;
 import com.br.clean.core.usecase.InsertPersonUseCase;
 import com.br.clean.entrypoint.controller.response.PersonResponse;
 import lombok.RequiredArgsConstructor;
@@ -8,18 +9,19 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 @Log4j2
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/person")
 public class PersonController {
     private final InsertPersonUseCase insertPersonUseCase;
+    private final FindAllPersonUseCase findAllPersonUseCase;
 
     @PostMapping("/insert")
     public ResponseEntity<PersonResponse> insertPerson(@RequestBody Person person){
@@ -30,5 +32,25 @@ public class PersonController {
             log.info("Person saved successfuly.");
             return ResponseEntity.status(HttpStatus.CREATED).body(personResponse);
         }).orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+    }
+
+    @GetMapping("/findAll")
+    public ResponseEntity<List<PersonResponse>> findAllPerson(){
+        log.info("Process initial of findAll.");
+        return (ResponseEntity<List<PersonResponse>>) Optional.of(findAllPersonUseCase.findAll())
+                .map(listPerson ->{
+                    if (listPerson.isEmpty()) {
+                        log.info("Listing executed successfuly. Registry inexists.");
+                        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+                    }
+                    List<PersonResponse> listPersonResponse = listPerson.stream()
+                            .map(person -> {
+                                PersonResponse personResponse = new PersonResponse();
+                                BeanUtils.copyProperties(person, personResponse);
+                                return personResponse;
+                            }).collect(Collectors.toList());
+                    log.info("Listing executed successfuly.");
+                    return ResponseEntity.status(HttpStatus.OK).body(listPersonResponse);
+                }).orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 }
