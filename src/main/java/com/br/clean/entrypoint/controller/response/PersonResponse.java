@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.Setter;
 
 @Data
-public class ResponsePerson {
+public class PersonResponse {
     private Long id;
     private String name;
     private String cep;

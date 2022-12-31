@@ -2,7 +2,7 @@ package com.br.clean.entrypoint.controller;
 
 import com.br.clean.core.domain.Person;
 import com.br.clean.core.usecase.InsertPersonUseCase;
-import com.br.clean.entrypoint.controller.response.ResponsePerson;
+import com.br.clean.entrypoint.controller.response.PersonResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.BeanUtils;
@@ -22,13 +22,13 @@ public class PersonController {
     private final InsertPersonUseCase insertPersonUseCase;
 
     @PostMapping("/insert")
-    public ResponseEntity<ResponsePerson> insertPerson(@RequestBody Person person){
+    public ResponseEntity<PersonResponse> insertPerson(@RequestBody Person person){
         log.info("Process initial of insert.");
         return Optional.of(insertPersonUseCase.insert(person)).map(personSaved ->{
-            ResponsePerson responsePerson = new ResponsePerson();
-            BeanUtils.copyProperties(personSaved, responsePerson);
+            PersonResponse personResponse = new PersonResponse();
+            BeanUtils.copyProperties(personSaved, personResponse);
             log.info("Person saved successfuly.");
-            return ResponseEntity.status(HttpStatus.CREATED).body(responsePerson);
+            return ResponseEntity.status(HttpStatus.CREATED).body(personResponse);
         }).orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
     }
 }
