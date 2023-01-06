@@ -105,12 +105,12 @@ docker build --tag clean-architecture .
 ### Method: POST
 - URL: http://localhost:8020/api/v1/person/insert
     #### Payload Request:
-      ```
-        {
-        "name": "Teste- 01",
-        "cep": "71901240"
-        }
-      ```
+  ```
+    {
+    "name": "Teste- 01",
+    "cep": "71901240"
+    }
+  ```
 
 ### Method: GET
 - URL: http://localhost:8020/api/v1/person/findAll
@@ -119,12 +119,12 @@ docker build --tag clean-architecture .
 ### Method: PUT
 - URL: http://localhost:8020/api/v1/person/update/1
     #### Payload Request:
-      ```
-        {
-            "name": "Teste-02",
-            "cep": "71901060"
-        }
-      ```
+  ```
+    {
+        "name": "Teste-02",
+        "cep": "71901060"
+    }
+  ```
 ### Method: DELETE
 - URL: http://localhost:8020/api/v1/person/delete/1
 
