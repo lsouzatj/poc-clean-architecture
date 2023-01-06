@@ -89,7 +89,7 @@ Em resumo, a arquitetura limpa é um conjunto de princípios de design de softwa
 ### Gerando imagem docker
 - Na raiz do projeto execute o seguinte comando para criar a imagem docker da aplicação:
 ```bash
-docker build --tag poc-clean-architecture .
+docker build --tag clean-architecture .
 ```  
 
 ### Executar docker-compose para subir aplicação com container docker
